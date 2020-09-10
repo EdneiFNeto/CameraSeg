@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(){
         var scheduleTaskExecutor = Executors.newScheduledThreadPool(5)
         scheduleTaskExecutor.scheduleAtFixedRate({
             Log.e(TAG, "TAKS: ${getHours()}")
+            takePhoto()
         }, 0, 1, TimeUnit.MINUTES)
 
         camera_capture_button.setOnClickListener { takePhoto() }
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity(){
                 val storageRef = storage.reference
 
                 var file = Uri.fromFile(photoFile)
-                val riversRef = storageRef.child("images/${file.lastPathSegment}")
+                val riversRef = storageRef.child("images/user/${file.lastPathSegment}")
                 var uploadTask = riversRef.putFile(file)
 
                 uploadTask.addOnFailureListener(OnFailureListener {
