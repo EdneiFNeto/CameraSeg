@@ -1,12 +1,12 @@
 package com.example.camera.ui
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -15,6 +15,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.camera.R
+import com.example.camera.ui.base.BaseActivity
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
@@ -27,8 +28,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : BaseActivity() {
 
+    private var isRecording: Boolean = false
     private var imageCapture: ImageCapture? = null
 
     private lateinit var outputDirectory: File
@@ -50,17 +52,39 @@ class MainActivity : AppCompatActivity(){
         }
 
         var scheduleTaskExecutor = Executors.newScheduledThreadPool(5)
+
         scheduleTaskExecutor.scheduleAtFixedRate({
             Log.e(TAG, "TAKS: ${getHours()}")
 //            takePhoto()
-        }, 0, 1, TimeUnit.MINUTES)
+        }, 0, 2, TimeUnit.MINUTES)
 
-        camera_capture_button.setOnClickListener { takePhoto() }
+        materialCardRecording.setOnClickListener {
+            isRecording = !isRecording
+            if (isRecording) {
+                imageRecording.setImageResource(R.mipmap.ic_icon_recording)
+            } else {
+                imageRecording.setImageResource(R.mipmap.ic_cam_security_2)
+            }
+        }
 
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
 
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        bottomAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.item_image -> startActivity(Intent(this, ListarCamerasActivity::class.java))
+                else -> false
+            }
+
+            true
+        }
+    }
+
 
     private fun getHours(): String {
         var calendar = Calendar.getInstance()
@@ -68,7 +92,7 @@ class MainActivity : AppCompatActivity(){
                 "${calendar.get(Calendar.SECOND)}"
     }
 
-    private fun takePhoto()     {
+    private fun takePhoto() {
 
         Log.i(TAG, "TackePhoto")
         // Get a stable reference of the modifiable image capture use case
@@ -151,7 +175,8 @@ class MainActivity : AppCompatActivity(){
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture)
+                    this, cameraSelector, preview, imageCapture
+                )
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)

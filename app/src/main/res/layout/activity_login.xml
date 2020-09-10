@@ -7,8 +7,8 @@
     android:background="@color/primaryDarkColor"
     tools:context=".ui.LoginActivity">
 
-
     <TextView
+        android:textColor="@color/primaryTextColor"
         android:textAlignment="center"
         android:id="@+id/textView"
         android:fontFamily="@font/chewy_regular"
@@ -33,6 +33,7 @@
 
 
     <TextView
+        android:textColor="@color/primaryTextColor"
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -47,10 +48,11 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButton"
+        android:id="@+id/button_facebook"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
         android:text="@string/button_facebook"
         app:layout_constraintEnd_toEndOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="@+id/textView2"
@@ -58,11 +60,13 @@
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
+        android:id="@+id/button_google"
         android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/darker_gray"
         android:text="@string/button_google"
-        app:layout_constraintEnd_toEndOf="@+id/materialButton"
-        app:layout_constraintStart_toStartOf="@+id/materialButton"
-        app:layout_constraintTop_toBottomOf="@+id/materialButton" />
+        app:layout_constraintEnd_toEndOf="@+id/button_facebook"
+        app:layout_constraintStart_toStartOf="@+id/button_facebook"
+        app:layout_constraintTop_toBottomOf="@+id/button_facebook" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
