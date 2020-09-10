@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "214656868796",
+    "firebase_url": "https://finances-5b2b5.firebaseio.com",
+    "project_id": "finances-5b2b5",
+    "storage_bucket": "finances-5b2b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214656868796:android:85ca7a6558c77134b5cbb9",
+        "android_client_info": {
+          "package_name": "com.example.camera"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqTOYJPYW1AgAJqvv0Zm86Hp3rR0XwZj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214656868796:android:4c3f7ba70394998cb5cbb9",
+        "android_client_info": {
+          "package_name": "com.example.gymfitness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqTOYJPYW1AgAJqvv0Zm86Hp3rR0XwZj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
