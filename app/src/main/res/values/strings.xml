@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Camera</string>
+    <string name="title_wellcome">Well Come Insecurity Cam</string>
+    <string name="title_descr_splash">Lorem Ipsum is simply dummy  text of the printing and typesetting industry.</string>
+    <string name="button_facebook">Facebok</string>
+    <string name="button_google">Google</string>
 </resources>
