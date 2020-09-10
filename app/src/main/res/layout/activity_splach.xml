@@ -9,13 +9,14 @@
 
 
     <TextView
+        android:fontFamily="@font/chewy_regular"
         android:textAlignment="center"
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/title_wellcome"
-        android:textSize="18dp"
+        android:textSize="26dp"
         app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
