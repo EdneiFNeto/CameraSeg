@@ -1,4 +1,4 @@
-package com.example.camera
+package com.example.camera.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -14,12 +14,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.camera.R
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -43,14 +43,16 @@ class MainActivity : AppCompatActivity(){
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                this,
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
             )
         }
 
         var scheduleTaskExecutor = Executors.newScheduledThreadPool(5)
         scheduleTaskExecutor.scheduleAtFixedRate({
             Log.e(TAG, "TAKS: ${getHours()}")
-            takePhoto()
+//            takePhoto()
         }, 0, 1, TimeUnit.MINUTES)
 
         camera_capture_button.setOnClickListener { takePhoto() }
