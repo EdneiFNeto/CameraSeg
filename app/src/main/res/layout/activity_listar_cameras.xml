@@ -20,8 +20,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewImage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,15 +31,5 @@
         app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/layout_images" />
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonAtualizar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Atualizar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

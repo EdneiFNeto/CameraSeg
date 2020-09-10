@@ -12,10 +12,9 @@
 
     <item
         android:visible="false"
-        android:icon="@drawable/ic_action_left_arrow"
-        android:id="@+id/item_back"
-        android:title="@string/Sair"/>
-
-
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_sync"
+        android:id="@+id/item_refresh"
+        android:title="@string/refresh"/>
 
 </menu>

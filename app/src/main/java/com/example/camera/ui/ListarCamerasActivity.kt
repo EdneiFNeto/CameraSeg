@@ -11,16 +11,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.camera.R
 import com.example.camera.ui.base.BaseActivity
 import com.example.camera.ui.base.interfaces.CallbackClick
+import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ListResult
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_listar_cameras.*
 import java.util.*
 
 class ListarCamerasActivity : BaseActivity() {
 
+    private var ids = arrayListOf(R.id.item_refresh)
     private lateinit var adapter: MyAdapter
     private var TAG = "ListarCamerasActivityLog"
     private val images = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listar_cameras)
@@ -29,30 +33,31 @@ class ListarCamerasActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        images.clear()
         adapter = MyAdapter(this, images)
         recycleViewImage.adapter = adapter
-
-        addItem()
-        buttonAtualizar.setOnClickListener {
-            images.clear()
-            addItem()
-        }
-
         showIcons()
+        showImages()
     }
 
     private fun showIcons() {
-        val id = R.drawable.ic_action_left_arrow
-        showNavigationIcon(id, object : CallbackClick{
+        showNavigationIcon(R.drawable.ic_action_left_arrow, object : CallbackClick{
             override fun onClick() {
                 finish()
             }
         })
+        for(id in ids){
+            icons(id, true, object:CallbackClick{
+                override fun onClick() {
+                    when(id){
+                        R.id.item_refresh->showImages()
+                    }
+                }
+            })
+        }
     }
 
-    private fun addItem() {
-
+    private fun showImages() {
+        images.clear()
         val storage = FirebaseStorage.getInstance()
         val listRef = storage.reference.child("images/user")
 
@@ -74,11 +79,14 @@ class ListarCamerasActivity : BaseActivity() {
             }
             .addOnFailureListener {
                 Log.e(TAG, "Exception  $it")
+            }
 
+            .addOnCompleteListener { result->
+                Log.e(TAG, "result $result")
             }
     }
 
-    inner class MyAdapter(val context: Context, val images: ArrayList<String>) :
+    inner class MyAdapter(private val context: Context, private val images: ArrayList<String>) :
         RecyclerView.Adapter<MyAdapter.Holder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {

@@ -15,8 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<!--        <activity android:name=".ui.ListarCamerasActivity"-->
-<!--            android:screenOrientation="portrait"/>-->
+        <activity android:name=".ui.ListarCamerasActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.LoginActivity"
             android:screenOrientation="portrait" />
@@ -24,7 +24,7 @@
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ListarCamerasActivity"
+            android:name=".ui.SplachActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
