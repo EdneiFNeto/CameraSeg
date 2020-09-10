@@ -43,12 +43,10 @@ class ListarCamerasActivity : BaseActivity() {
     }
 
     private fun showIcons() {
-        val id = arrayListOf(R.id.item_back)
-        showNavigationIcon(id[0], object : CallbackClick{
+        val id = R.drawable.ic_action_left_arrow
+        showNavigationIcon(id, object : CallbackClick{
             override fun onClick() {
-                when(id[0]){
-                    R.id.item_back->finish()
-                }
+                finish()
             }
         })
     }

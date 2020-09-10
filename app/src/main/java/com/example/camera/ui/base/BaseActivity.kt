@@ -20,9 +20,9 @@ open class BaseActivity : AppCompatActivity(){
         return null
     }
 
-    protected open fun showNavigationIcon(id: Int, callback: CallbackClick){
+    protected open fun showNavigationIcon(icon: Int, callback: CallbackClick){
         var toolbar = getToolbar()
-        toolbar?.setNavigationIcon(id)
+        toolbar?.setNavigationIcon(icon)
         toolbar?.setNavigationOnClickListener {
             callback.onClick()
         }
@@ -31,7 +31,6 @@ open class BaseActivity : AppCompatActivity(){
     protected  open fun getSettingFontToolbar(){
         getToolbar()?.setTitleTextAppearance(this, R.style.RobotoBoldTextAppearance)
     }
-
 
     protected  open fun icons(id: Int, visible:Boolean, callback: CallbackClick){
         var menu = getToolbar()?.menu
