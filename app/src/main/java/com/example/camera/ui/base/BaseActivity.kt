@@ -1,12 +1,16 @@
 package com.example.camera.ui.base
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.camera.R
 import com.example.camera.async.base.BaseDelete
+import com.example.camera.async.base.BaseSelect
 import com.example.camera.model.User
+import com.example.camera.ui.MainActivity
 import com.example.camera.ui.base.interfaces.CallbackClick
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -18,6 +22,8 @@ import com.google.android.material.bottomappbar.BottomAppBar
 open class BaseActivity : AppCompatActivity(){
 
     protected lateinit var mGoogleSignInClient: GoogleSignInClient
+    protected var user :User? = null
+    private var TAG = "BaseActivityLog"
 
     override fun onStart() {
         super.onStart()
@@ -115,6 +121,19 @@ open class BaseActivity : AppCompatActivity(){
     }
 
 
+    inner class SelectUser(context: Context, list: java.util.ArrayList<User>, model:String):
+        BaseSelect<User>(context, list, model){
 
+        override fun onPostExecute(result: List<User>?) {
+            super.onPostExecute(result)
+            Log.i(TAG, "Select user $result")
+            if(result!= null && result.isNotEmpty()){
+                user = User.helper(result[0])
+                var intent = Intent(resources.getString(R.string.action_get_user))
+                intent.putExtra(resources.getString(R.string.extra_success), resources.getString(R.string.select_user))
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            }
+        }
+    }
 
 }

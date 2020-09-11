@@ -38,7 +38,6 @@ class MainActivity : BaseActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-    private var user :User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -237,16 +236,5 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    inner class SelectUser(context: Context, list: ArrayList<User>, model:String):
-        BaseSelect<User>(context, list, model){
-
-        override fun onPostExecute(result: List<User>?) {
-            super.onPostExecute(result)
-            Log.i(TAG, "Select user $result")
-            if(result!= null && result.isNotEmpty()){
-                user = User.helper(result[0])
-            }
-        }
-    }
 }
 
