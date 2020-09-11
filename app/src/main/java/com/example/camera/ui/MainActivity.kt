@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.view.Surface
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -179,6 +180,7 @@ class MainActivity : BaseActivity() {
                 }
 
             imageCapture = ImageCapture.Builder()
+                .setTargetRotation(Surface.ROTATION_0)
                 .build()
 
 
@@ -189,6 +191,8 @@ class MainActivity : BaseActivity() {
 
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
+
+
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
