@@ -22,6 +22,7 @@ import com.example.camera.util.CallBack
 import com.example.camera.util.ExecuteTaskUtil
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -46,6 +47,8 @@ class MainActivity : BaseActivity() {
         SelectUser(this, arrayListOf(), resources.getString(R.string.class_user))
             .execute()
 
+        logout()
+
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
@@ -54,7 +57,6 @@ class MainActivity : BaseActivity() {
         }
 
         eventListener()
-
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -76,14 +78,19 @@ class MainActivity : BaseActivity() {
             }
 
             if (isRecording) {
+                Snackbar.make(bottomAppBar, resources.getString(R.string.title_recording), Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(resources.getColor(android.R.color.holo_green_light))
+                    .setTextColor(resources.getColor(R.color.primaryDarkColor))
+                    .show()
                 imageButtonRecording.setImageResource(R.mipmap.ic_icon_recording)
             } else {
+                Snackbar.make(bottomAppBar, resources.getString(R.string.title_stop_recording), Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(resources.getColor(android.R.color.holo_red_light))
+                    .setTextColor(resources.getColor(R.color.primaryDarkColor))
+                    .show()
                 imageButtonRecording.setImageResource(R.mipmap.ic_cam_security_2)
             }
-
         }
-
-
     }
 
     override fun onResume() {

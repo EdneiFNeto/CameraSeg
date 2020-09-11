@@ -14,4 +14,6 @@
     <string name="action_get_user">action_get_user</string>
     <string name="select_user">select_user</string>
     <string name="extra_success">extra_success</string>
+    <string name="title_recording">Gravando...</string>
+    <string name="title_stop_recording">Stop gravação!</string>
 </resources>

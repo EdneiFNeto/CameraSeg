@@ -10,6 +10,7 @@ import com.example.camera.R
 import com.example.camera.async.base.BaseDelete
 import com.example.camera.async.base.BaseSelect
 import com.example.camera.model.User
+import com.example.camera.ui.LoginActivity
 import com.example.camera.ui.MainActivity
 import com.example.camera.ui.base.interfaces.CallbackClick
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -28,7 +29,6 @@ open class BaseActivity : AppCompatActivity(){
     override fun onStart() {
         super.onStart()
         getSettingFontToolbar()
-        logout()
     }
 
     protected  open fun getToolbar(): MaterialToolbar?{
@@ -99,14 +99,13 @@ open class BaseActivity : AppCompatActivity(){
     }
 
     protected  open fun signOut() {
-
-        if(mGoogleSignInClient!= null)
-            initGoogle()
-
+        initGoogle()
         mGoogleSignInClient.signOut()
             .addOnCompleteListener(this, OnCompleteListener<Void> {
                 Log.i("signOut", "Disconnected")
-                finish()
+                var intent = Intent(this@BaseActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
             })
     }
 

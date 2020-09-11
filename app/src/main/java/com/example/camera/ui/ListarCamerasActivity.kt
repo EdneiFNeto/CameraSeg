@@ -43,6 +43,9 @@ class ListarCamerasActivity : BaseActivity() {
         setContentView(R.layout.activity_listar_cameras)
         SelectUser(this, arrayListOf(), resources.getString(R.string.class_user))
             .execute()
+
+        logout()
+
     }
 
     override fun onResume() {
@@ -59,7 +62,6 @@ class ListarCamerasActivity : BaseActivity() {
             IntentFilter(resources.getString(R.string.action_get_user))
         )
     }
-
 
     private fun showIcons() {
         showNavigationIcon(R.drawable.ic_action_left_arrow, object : CallbackClick {

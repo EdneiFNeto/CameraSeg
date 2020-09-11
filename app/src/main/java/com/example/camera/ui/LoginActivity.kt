@@ -28,7 +28,6 @@ import java.util.ArrayList
 
 class LoginActivity : BaseActivity() {
 
-    private var dialog: AlertDialog?=null
     private val RC_SIGN_IN: Int = 1
     val TAG = "LoginActitivyLog"
     private lateinit var auth: FirebaseAuth
@@ -41,23 +40,15 @@ class LoginActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        var dialogBuilder = MaterialAlertDialogBuilder(this)
-        dialogBuilder.setCancelable(false)
-        dialogBuilder.setView(LayoutInflater.from(this).inflate(R.layout.dialog, null))
-        dialog = dialogBuilder.create()
-        dialog?.show()
-
         auth = FirebaseAuth.getInstance()
         init()
-
-        SelectUser(this, arrayListOf(), resources.getString(R.string.class_user)).execute()
     }
 
 
     private fun init() {
 
         initGoogle()
+        getUserLoginGoogle(null)
 
         sign_in_button.setSize(SignInButton.SIZE_STANDARD)
         sign_in_button.setOnClickListener {
@@ -92,20 +83,16 @@ class LoginActivity : BaseActivity() {
 
         val c = GoogleSignIn.getLastSignedInAccount(this)
         if (idToken != null) {
-            Log.i(TAG, "**Success login google**")
-            Log.i(TAG, "Display name ${c?.displayName}")
-            Log.i(TAG, "Email ${c?.email}")
-            Log.i(TAG, "ID ${c?.id}")
-            Log.i(TAG, "Photo Url ${c?.photoUrl}")
-            Log.i(TAG, "Token ${c?.idToken}")
-            Log.i(TAG, "Account Token $idToken")
             try {
                 firebaseAuthWithGoogle(idToken, c)
             } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
             }
         } else {
-            signOut()
+            mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, OnCompleteListener<Void> {
+                    Log.i("signOut", "Disconnected")
+                })
         }
     }
 
@@ -148,23 +135,8 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    inner class SelectUser(context: Context, list: ArrayList<User>, model:String):
-            BaseSelect<User>(context, list, model){
-
-        override fun onPostExecute(result: List<User>?) {
-            super.onPostExecute(result)
-            Log.i(TAG, "Select user $result")
-            if(result!= null && result.isNotEmpty()){
-                getUserLoginGoogle(result?.get(0).token)
-            }
-            dialog?.dismiss()
-        }
-    }
-
     override fun onPause() {
         super.onPause()
-        if(dialog?.isShowing==true)
-            dialog?.dismiss()
     }
 }
 
