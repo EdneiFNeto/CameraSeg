@@ -154,6 +154,7 @@ class MainActivity : BaseActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener(Runnable {
+
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
@@ -167,24 +168,9 @@ class MainActivity : BaseActivity() {
             imageCapture = ImageCapture.Builder()
                 .build()
 
-            val imageAnalysis = ImageAnalysis.Builder()
-                .setTargetResolution(Size(1280, 720))
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-
-            imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
-                val rotationDegrees = image.imageInfo.rotationDegrees
-                // insert your code here.
-
-                Log.w(TAG, "rotationDegrees $rotationDegrees")
-                Log.w(TAG, "image $image")
-            })
 
             // Select back camera as a default
-            val cameraSelector = if (isRotateCamera)
-                CameraSelector.DEFAULT_FRONT_CAMERA
-            else
-                CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
 
@@ -193,7 +179,7 @@ class MainActivity : BaseActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this as LifecycleOwner, cameraSelector, imageAnalysis, preview, imageCapture
+                    this as LifecycleOwner, cameraSelector, preview, imageCapture
                 )
 
             } catch (exc: Exception) {
