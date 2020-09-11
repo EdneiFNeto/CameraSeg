@@ -33,7 +33,6 @@ class MainActivity : BaseActivity() {
     private var isRecording: Boolean = false
     private var isRotateCamera: Boolean = false
     private var imageCapture: ImageCapture? = null
-
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
 
@@ -52,24 +51,17 @@ class MainActivity : BaseActivity() {
             )
         }
 
-
+        var task = ExecuteTaskUtil()
 
         imageButtonRecording.setOnClickListener {
             isRecording = !isRecording
-            try{
-                ExecuteTaskUtil().start(object :CallBack{
-                    override fun tasks() {
-                        if(isRecording)
-                            Log.e(TAG, "Run Tasks")
-                        else{
-                            ExecuteTaskUtil().stop()
-                        }
-                    }
-                }, 3)
-            }catch (e: java.lang.Exception){
-                e.printStackTrace()
+            if (isRecording) {
+                task.start(object : CallBack {
+                    override fun tasks() {Log.e(TAG, "Run Tasks")}
+                }, 1)
+            }else{
+                task.stop()
             }
-
 
             if (isRecording) {
                 imageButtonRecording.setImageResource(R.mipmap.ic_icon_recording)
@@ -238,7 +230,8 @@ class MainActivity : BaseActivity() {
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
+        IntArray
+    ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()
