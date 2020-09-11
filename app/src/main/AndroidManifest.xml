@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.ListarCamerasActivity"
+            android:noHistory="true"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.LoginActivity"
@@ -25,6 +26,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.SplachActivity"
+            android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

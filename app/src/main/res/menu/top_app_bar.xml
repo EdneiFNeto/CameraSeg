@@ -7,7 +7,7 @@
         android:title="@string/about"/>
 
     <item
-        android:id="@+id/logout"
+        android:id="@+id/item_logout"
         android:title="@string/Sair"/>
 
     <item

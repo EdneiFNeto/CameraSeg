@@ -1,6 +1,7 @@
 package com.example.camera.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,6 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.camera.R
+import com.example.camera.async.base.BaseSelect
+import com.example.camera.model.User
 import com.example.camera.ui.base.BaseActivity
 import com.example.camera.util.CallBack
 import com.example.camera.util.ExecuteTaskUtil
@@ -35,10 +38,14 @@ class MainActivity : BaseActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private var user :User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        SelectUser(this, arrayListOf(), resources.getString(R.string.class_user))
+            .execute()
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -47,8 +54,15 @@ class MainActivity : BaseActivity() {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
-        var task = ExecuteTaskUtil()
+        eventListener()
 
+        outputDirectory = getOutputDirectory()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
+    }
+
+    private fun eventListener() {
+        var task = ExecuteTaskUtil()
         imageButtonRecording.setOnClickListener {
             isRecording = !isRecording
             if (isRecording) {
@@ -70,13 +84,6 @@ class MainActivity : BaseActivity() {
 
         }
 
-        cameraRotate.setOnClickListener {
-            isRotateCamera = !isRotateCamera
-            startCamera()
-        }
-
-        outputDirectory = getOutputDirectory()
-        cameraExecutor = Executors.newSingleThreadExecutor()
 
     }
 
@@ -133,7 +140,7 @@ class MainActivity : BaseActivity() {
                 val storageRef = storage.reference
 
                 var file = Uri.fromFile(photoFile)
-                val riversRef = storageRef.child("images/user/${file.lastPathSegment}")
+                val riversRef = storageRef.child("images/${user?.id}/${file.lastPathSegment}")
                 var uploadTask = riversRef.putFile(file)
 
                 uploadTask.addOnFailureListener(OnFailureListener {
@@ -226,6 +233,18 @@ class MainActivity : BaseActivity() {
                     "Permissions not granted by the user.",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        }
+    }
+
+    inner class SelectUser(context: Context, list: ArrayList<User>, model:String):
+        BaseSelect<User>(context, list, model){
+
+        override fun onPostExecute(result: List<User>?) {
+            super.onPostExecute(result)
+            Log.i(TAG, "Select user $result")
+            if(result!= null && result.isNotEmpty()){
+                user = User.helper(result[0])
             }
         }
     }

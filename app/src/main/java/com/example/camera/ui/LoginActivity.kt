@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import androidx.appcompat.app.AlertDialog
 import com.example.camera.R
 import com.example.camera.async.base.BaseInsert
 import com.example.camera.async.base.BaseSelect
@@ -17,6 +19,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
@@ -25,7 +28,7 @@ import java.util.ArrayList
 
 class LoginActivity : BaseActivity() {
 
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private var dialog: AlertDialog?=null
     private val RC_SIGN_IN: Int = 1
     val TAG = "LoginActitivyLog"
     private lateinit var auth: FirebaseAuth
@@ -39,9 +42,16 @@ class LoginActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
+        var dialogBuilder = MaterialAlertDialogBuilder(this)
+        dialogBuilder.setCancelable(false)
+        dialogBuilder.setView(LayoutInflater.from(this).inflate(R.layout.dialog, null))
+        dialog = dialogBuilder.create()
+        dialog?.show()
+
         auth = FirebaseAuth.getInstance()
         init()
-        SelectUser(this, arrayListOf<User>(), resources.getString(R.string.class_user)).execute()
+
+        SelectUser(this, arrayListOf(), resources.getString(R.string.class_user)).execute()
     }
 
 
@@ -54,16 +64,6 @@ class LoginActivity : BaseActivity() {
             val signInIntent = mGoogleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
-    }
-
-    private fun initGoogle() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -138,12 +138,6 @@ class LoginActivity : BaseActivity() {
             }
     }
 
-    private fun signOut() {
-        mGoogleSignInClient.signOut()
-            .addOnCompleteListener(this, OnCompleteListener<Void> {
-                Log.e(TAG, "Disconetted $it")
-            })
-    }
 
     inner class SaveUser(private val context: Context, users: ArrayList<User>, model: String) :
         BaseInsert<User>(context, users, model) {
@@ -163,7 +157,14 @@ class LoginActivity : BaseActivity() {
             if(result!= null && result.isNotEmpty()){
                 getUserLoginGoogle(result?.get(0).token)
             }
+            dialog?.dismiss()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(dialog?.isShowing==true)
+            dialog?.dismiss()
     }
 }
 
