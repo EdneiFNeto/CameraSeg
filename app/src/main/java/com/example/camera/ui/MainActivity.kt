@@ -52,19 +52,31 @@ class MainActivity : BaseActivity() {
             )
         }
 
-        ExecuteTaskUtil().task(object :CallBack{
-            override fun tasks() {
-                Log.e(TAG, "Run tasks")
-            }
-        }, 3)
+
 
         imageButtonRecording.setOnClickListener {
             isRecording = !isRecording
+            try{
+                ExecuteTaskUtil().start(object :CallBack{
+                    override fun tasks() {
+                        if(isRecording)
+                            Log.e(TAG, "Run Tasks")
+                        else{
+                            ExecuteTaskUtil().stop()
+                        }
+                    }
+                }, 3)
+            }catch (e: java.lang.Exception){
+                e.printStackTrace()
+            }
+
+
             if (isRecording) {
                 imageButtonRecording.setImageResource(R.mipmap.ic_icon_recording)
             } else {
                 imageButtonRecording.setImageResource(R.mipmap.ic_cam_security_2)
             }
+
         }
 
         cameraRotate.setOnClickListener {

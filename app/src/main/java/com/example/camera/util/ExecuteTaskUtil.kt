@@ -8,18 +8,25 @@ import java.util.concurrent.TimeUnit
 
 class ExecuteTaskUtil {
 
-    val TAG = "ExecuteTaskUtilLog"
+    private val TAG = "ExecuteTaskUtilLog"
     private var scheduleTaskExecutor: ScheduledExecutorService? = null
 
     constructor(){
-        scheduleTaskExecutor = Executors.newScheduledThreadPool(5)
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(1)
     }
 
-    fun task(callBack: CallBack, time: Long) {
+    fun start(callBack: CallBack, time: Long) {
         scheduleTaskExecutor?.scheduleAtFixedRate({
             Log.e(TAG, "TAKS: " + DateUtil().getHours())
             callBack.tasks()
         }, 0, time, TimeUnit.SECONDS)
+    }
+
+    fun stop(){
+        if(scheduleTaskExecutor!==null){
+            Log.e(TAG, "Finish tasks")
+            scheduleTaskExecutor?.shutdown()
+        }
     }
 }
 
