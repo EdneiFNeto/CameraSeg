@@ -3,24 +3,27 @@ package com.example.camera.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import com.example.camera.R
 import com.example.camera.ui.base.BaseActivity
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -31,6 +34,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : BaseActivity() {
 
     private var isRecording: Boolean = false
+    private var isRotateCamera: Boolean = false
     private var imageCapture: ImageCapture? = null
 
     private lateinit var outputDirectory: File
@@ -52,19 +56,27 @@ class MainActivity : BaseActivity() {
         }
 
         var scheduleTaskExecutor = Executors.newScheduledThreadPool(5)
-
         scheduleTaskExecutor.scheduleAtFixedRate({
             Log.e(TAG, "TAKS: ${getHours()}")
 //            takePhoto()
         }, 0, 2, TimeUnit.MINUTES)
 
         imageButtonRecording.setOnClickListener {
+
+            takePhoto()
+
             isRecording = !isRecording
             if (isRecording) {
                 imageButtonRecording.setImageResource(R.mipmap.ic_icon_recording)
             } else {
                 imageButtonRecording.setImageResource(R.mipmap.ic_cam_security_2)
             }
+
+        }
+
+        cameraRotate.setOnClickListener {
+            isRotateCamera = !isRotateCamera
+            startCamera()
         }
 
         outputDirectory = getOutputDirectory()
@@ -105,11 +117,9 @@ class MainActivity : BaseActivity() {
         val photoFile = File(
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.UK)
-                .format(System.currentTimeMillis()) + ".jpg"
-        )
+                .format(System.currentTimeMillis()) + ".jpg")
 
         Log.i(TAG, "photoFile $photoFile")
-
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -146,6 +156,8 @@ class MainActivity : BaseActivity() {
                 Log.d(TAG, msg)
             }
         })
+
+
     }
 
     private fun startCamera() {
@@ -165,8 +177,24 @@ class MainActivity : BaseActivity() {
             imageCapture = ImageCapture.Builder()
                 .build()
 
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(1280, 720))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+
+            imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+                val rotationDegrees = image.imageInfo.rotationDegrees
+                // insert your code here.
+
+                Log.w(TAG, "rotationDegrees $rotationDegrees")
+                Log.w(TAG, "image $image")
+            })
+
             // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = if(isRotateCamera)
+                CameraSelector.DEFAULT_FRONT_CAMERA
+            else
+                CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
 
@@ -175,8 +203,7 @@ class MainActivity : BaseActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
-                )
+                    this as LifecycleOwner, cameraSelector, imageAnalysis, preview, imageCapture)
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
