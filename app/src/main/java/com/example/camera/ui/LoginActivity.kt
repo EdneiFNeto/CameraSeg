@@ -1,9 +1,13 @@
 package com.example.camera.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.example.camera.R
+import com.example.camera.async.base.BaseInsert
+import com.example.camera.async.base.BaseSelect
+import com.example.camera.model.User
 import com.example.camera.ui.base.BaseActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -16,6 +20,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.ArrayList
 
 
 class LoginActivity : BaseActivity() {
@@ -33,15 +38,16 @@ class LoginActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+
         auth = FirebaseAuth.getInstance()
-        googleLogin()
+        init()
+        SelectUser(this, arrayListOf<User>(), resources.getString(R.string.class_user)).execute()
     }
 
 
-    private fun googleLogin() {
+    private fun init() {
 
         initGoogle()
-        getUserLoginGoogle(null)
 
         sign_in_button.setSize(SignInButton.SIZE_STANDARD)
         sign_in_button.setOnClickListener {
@@ -63,7 +69,6 @@ class LoginActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.e(TAG, "Data $data")
-
         when (requestCode) {
             RC_SIGN_IN -> {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -72,42 +77,43 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-
     private fun handleSignInResult(task: Task<GoogleSignInAccount>?) {
         try {
             val account = task?.getResult(ApiException::class.java)
             Log.i(TAG, "Token:" + account?.idToken)
-            getUserLoginGoogle(account)
+            getUserLoginGoogle(account?.idToken.toString())
         } catch (e: ApiException) {
             e.printStackTrace()
             Log.e(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
 
-    private fun getUserLoginGoogle(account: GoogleSignInAccount?) {
+    private fun getUserLoginGoogle(idToken : String?) {
 
         val c = GoogleSignIn.getLastSignedInAccount(this)
-        if(account?.idToken != null){
+        if (idToken != null) {
             Log.i(TAG, "**Success login google**")
             Log.i(TAG, "Display name ${c?.displayName}")
             Log.i(TAG, "Email ${c?.email}")
             Log.i(TAG, "ID ${c?.id}")
             Log.i(TAG, "Photo Url ${c?.photoUrl}")
             Log.i(TAG, "Token ${c?.idToken}")
-            Log.i(TAG, "Account Token ${account?.idToken}")
-            Log.i(TAG, "Account id ${account?.id}")
+            Log.i(TAG, "Account Token $idToken")
             try {
-                firebaseAuthWithGoogle(account?.idToken.toString())
+                firebaseAuthWithGoogle(idToken, c)
             } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
             }
-        }else{
+        } else {
             signOut()
         }
-
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
+    private fun firebaseAuthWithGoogle(
+        idToken: String,
+        c: GoogleSignInAccount?
+    ) {
+
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
@@ -115,7 +121,16 @@ class LoginActivity : BaseActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.i(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
-                    Log.i(TAG, "User ${user?.displayName}")
+                    var id = c?.id?.toBigInteger()
+                    val users = arrayListOf(
+                        User(
+                            id = id?.toLong(),
+                            name = user?.displayName,
+                            email = user?.email,
+                            token = idToken
+                        )
+                    )
+                    SaveUser(this, users, resources.getString(R.string.class_user)).execute()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.e(TAG, "signInWithCredential:failure", task.exception)
@@ -130,11 +145,25 @@ class LoginActivity : BaseActivity() {
             })
     }
 
-    private fun revokeAccess() {
-        mGoogleSignInClient.revokeAccess()
-            .addOnCompleteListener(this) {
-                Log.e(TAG, "revoke $it")
-            }
+    inner class SaveUser(private val context: Context, users: ArrayList<User>, model: String) :
+        BaseInsert<User>(context, users, model) {
+        override fun onPostExecute(result: List<User>?) {
+            super.onPostExecute(result)
+            Log.i(TAG, "Save user $result")
+            startActivity(Intent(context, MainActivity::class.java))
+        }
     }
 
+    inner class SelectUser(context: Context, list: ArrayList<User>, model:String):
+            BaseSelect<User>(context, list, model){
+
+        override fun onPostExecute(result: List<User>?) {
+            super.onPostExecute(result)
+            Log.i(TAG, "Select user $result")
+            if(result!= null && result.isNotEmpty()){
+                getUserLoginGoogle(result?.get(0).token)
+            }
+        }
+    }
 }
+

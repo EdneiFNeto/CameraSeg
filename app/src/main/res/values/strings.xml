@@ -10,4 +10,5 @@
     <string name="loader">Carregando...</string>
     <string name="update_image">Atualizando images...</string>
     <string name="default_web_client_id">214656868796-nhmk93bg315i45k5b26u10nrvb84rolg.apps.googleusercontent.com</string>
+    <string name="class_user">User</string>
 </resources>
