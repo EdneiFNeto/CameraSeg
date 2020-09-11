@@ -44,11 +44,7 @@ class MainActivity : BaseActivity() {
         if (allPermissionsGranted()) {
             startCamera()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
-            )
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
         var task = ExecuteTaskUtil()
@@ -57,7 +53,10 @@ class MainActivity : BaseActivity() {
             isRecording = !isRecording
             if (isRecording) {
                 task.start(object : CallBack {
-                    override fun tasks() {Log.e(TAG, "Run Tasks")}
+                    override fun tasks() {
+                        takePhoto()
+                        Log.e(TAG, "Run Tasks")
+                    }
                 }, 1)
             }else{
                 task.stop()
