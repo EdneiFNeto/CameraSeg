@@ -3,8 +3,6 @@ package com.example.camera.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -17,18 +15,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.camera.R
 import com.example.camera.ui.base.BaseActivity
+import com.example.camera.util.CallBack
+import com.example.camera.util.ExecuteTaskUtil
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : BaseActivity() {
@@ -55,23 +52,19 @@ class MainActivity : BaseActivity() {
             )
         }
 
-        var scheduleTaskExecutor = Executors.newScheduledThreadPool(5)
-        scheduleTaskExecutor.scheduleAtFixedRate({
-            Log.e(TAG, "TAKS: ${getHours()}")
-//            takePhoto()
-        }, 0, 2, TimeUnit.MINUTES)
+        ExecuteTaskUtil().task(object :CallBack{
+            override fun tasks() {
+                Log.e(TAG, "Run tasks")
+            }
+        }, 3)
 
         imageButtonRecording.setOnClickListener {
-
-            takePhoto()
-
             isRecording = !isRecording
             if (isRecording) {
                 imageButtonRecording.setImageResource(R.mipmap.ic_icon_recording)
             } else {
                 imageButtonRecording.setImageResource(R.mipmap.ic_cam_security_2)
             }
-
         }
 
         cameraRotate.setOnClickListener {
@@ -97,13 +90,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-
-    private fun getHours(): String {
-        var calendar = Calendar.getInstance()
-        return "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}:" +
-                "${calendar.get(Calendar.SECOND)}"
-    }
-
     private fun takePhoto() {
 
         Log.i(TAG, "TackePhoto")
@@ -117,7 +103,8 @@ class MainActivity : BaseActivity() {
         val photoFile = File(
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.UK)
-                .format(System.currentTimeMillis()) + ".jpg")
+                .format(System.currentTimeMillis()) + ".jpg"
+        )
 
         Log.i(TAG, "photoFile $photoFile")
 
@@ -191,7 +178,7 @@ class MainActivity : BaseActivity() {
             })
 
             // Select back camera as a default
-            val cameraSelector = if(isRotateCamera)
+            val cameraSelector = if (isRotateCamera)
                 CameraSelector.DEFAULT_FRONT_CAMERA
             else
                 CameraSelector.DEFAULT_BACK_CAMERA
@@ -203,7 +190,8 @@ class MainActivity : BaseActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this as LifecycleOwner, cameraSelector, imageAnalysis, preview, imageCapture)
+                    this as LifecycleOwner, cameraSelector, imageAnalysis, preview, imageCapture
+                )
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -238,8 +226,7 @@ class MainActivity : BaseActivity() {
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray
-    ) {
+        IntArray) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()

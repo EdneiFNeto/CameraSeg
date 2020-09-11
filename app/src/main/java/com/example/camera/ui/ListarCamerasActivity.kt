@@ -7,19 +7,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.camera.R
 import com.example.camera.ui.base.BaseActivity
 import com.example.camera.ui.base.interfaces.CallbackClick
-import com.google.android.gms.tasks.Task
+import com.example.camera.util.CallBack
+import com.example.camera.util.ExecuteTaskUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ListResult
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_listar_cameras.*
 import java.util.*
 
 class ListarCamerasActivity : BaseActivity() {
 
+    private var dialog: AlertDialog?=null
     private var ids = arrayListOf(R.id.item_refresh)
     private lateinit var adapter: MyAdapter
     private var TAG = "ListarCamerasActivityLog"
@@ -37,14 +41,19 @@ class ListarCamerasActivity : BaseActivity() {
         recycleViewImage.adapter = adapter
         showIcons()
         showImages()
+//
+//        ExecuteTaskUtil(true).init(object: CallBack {
+//            override fun tasks() {
+//                showImages()
+//            }
+//        }, 3)
     }
 
     private fun showIcons() {
         showNavigationIcon(R.drawable.ic_action_left_arrow, object : CallbackClick{
-            override fun onClick() {
-                finish()
-            }
+            override fun onClick() {finish()}
         })
+
         for(id in ids){
             icons(id, true, object:CallbackClick{
                 override fun onClick() {
@@ -57,7 +66,17 @@ class ListarCamerasActivity : BaseActivity() {
     }
 
     private fun showImages() {
+
         images.clear()
+
+        var dialogBuilder = MaterialAlertDialogBuilder(this)
+        val myView = LayoutInflater.from(this).inflate(R.layout.dialog, null)
+        myView.findViewById<TextView>(R.id.titleLoader).text=resources.getString(R.string.update_image)
+        dialogBuilder.setView(myView)
+        dialogBuilder.setCancelable(false)
+        dialog = dialogBuilder.create()
+        dialog?.show()
+
         val storage = FirebaseStorage.getInstance()
         val listRef = storage.reference.child("images/user")
 
@@ -80,9 +99,9 @@ class ListarCamerasActivity : BaseActivity() {
             .addOnFailureListener {
                 Log.e(TAG, "Exception  $it")
             }
-
             .addOnCompleteListener { result->
                 Log.e(TAG, "result $result")
+                dialog?.dismiss()
             }
     }
 
@@ -118,5 +137,11 @@ class ListarCamerasActivity : BaseActivity() {
             }
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(dialog?.isShowing == true)
+            dialog?.dismiss()
     }
 }

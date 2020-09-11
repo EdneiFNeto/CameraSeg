@@ -7,4 +7,6 @@
     <string name="about">Sobre</string>
     <string name="Sair">Sair</string>
     <string name="refresh">Atualizar</string>
+    <string name="loader">Carregando...</string>
+    <string name="update_image">Atualizando images...</string>
 </resources>
