@@ -58,12 +58,12 @@ class MainActivity : BaseActivity() {
 //            takePhoto()
         }, 0, 2, TimeUnit.MINUTES)
 
-        materialCardRecording.setOnClickListener {
+        imageButtonRecording.setOnClickListener {
             isRecording = !isRecording
             if (isRecording) {
-                imageRecording.setImageResource(R.mipmap.ic_icon_recording)
+                imageButtonRecording.setImageResource(R.mipmap.ic_icon_recording)
             } else {
-                imageRecording.setImageResource(R.mipmap.ic_cam_security_2)
+                imageButtonRecording.setImageResource(R.mipmap.ic_cam_security_2)
             }
         }
 

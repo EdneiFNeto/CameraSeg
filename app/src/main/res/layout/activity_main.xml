@@ -47,38 +47,17 @@
             app:menu="@menu/bottom_app_bar"
             tools:ignore="BottomAppBar" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:id="@+id/materialCardRecording"
-            android:layout_marginStart="16dp"
+        <ImageButton
+            android:id="@+id/imageButtonRecording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/primaryDarkColor"
-            android:elevation="0dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp"
+            android:background="@drawable/circle"
+            android:padding="12dp"
+            android:src="@mipmap/ic_cam_security_2"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <LinearLayout
-                android:layout_marginTop="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-
-                    android:id="@+id/imageRecording"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@mipmap/ic_cam_security_2" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
