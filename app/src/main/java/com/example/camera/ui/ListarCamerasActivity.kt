@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
+import com.daimajia.slider.library.SliderTypes.TextSliderView
 import com.example.camera.R
 import com.example.camera.async.base.BaseSelect
 import com.example.camera.model.User
@@ -166,12 +167,8 @@ class ListarCamerasActivity : BaseActivity() {
         }
     }
 
-
     inner class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.e(TAG, "Data ${intent?.data}")
-            Log.e(TAG, "Action ${intent?.action}")
-
             when (intent?.action) {
                 resources.getString(R.string.action_get_user) -> {
                     if (intent.hasExtra(resources.getString(R.string.extra_success))) {
@@ -180,8 +177,5 @@ class ListarCamerasActivity : BaseActivity() {
                 }
             }
         }
-
     }
-
-
 }

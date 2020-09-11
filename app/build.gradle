@@ -80,5 +80,9 @@ dependencies {
     //google
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
 
+    //slide
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.daimajia.slider:library:1.1.5@aar'
+
 
 }
