@@ -17,4 +17,10 @@
         android:id="@+id/item_refresh"
         android:title="@string/refresh"/>
 
+    <item
+        android:id="@+id/item_profile_toolbar"
+        android:icon="@drawable/ic_action_avatar_2"
+        android:title="Perfil"/>
+
+
 </menu>
