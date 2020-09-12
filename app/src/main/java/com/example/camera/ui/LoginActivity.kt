@@ -114,7 +114,8 @@ class LoginActivity : BaseActivity() {
                             id = id?.toLong(),
                             name = user?.displayName,
                             email = user?.email,
-                            token = idToken
+                            token = idToken,
+                            icon = c?.photoUrl.toString()
                         )
                     )
                     SaveUser(this, users, resources.getString(R.string.class_user)).execute()

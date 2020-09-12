@@ -10,7 +10,7 @@ import com.example.camera.model.User
 @Database(
     entities = [
         User::class
-    ], version = 1, exportSchema = false
+    ], version = 2, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 

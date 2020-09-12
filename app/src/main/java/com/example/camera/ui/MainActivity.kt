@@ -100,6 +100,7 @@ class MainActivity : BaseActivity() {
         bottomAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.item_image -> startActivity(Intent(this, ListarCamerasActivity::class.java))
+                R.id.item_profile -> startActivity(Intent(this, ProfileActivity::class.java))
                 else -> false
             }
 
