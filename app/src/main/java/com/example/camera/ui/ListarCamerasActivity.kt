@@ -96,7 +96,7 @@ class ListarCamerasActivity : BaseActivity() {
         dialog?.show()
 
         val storage = FirebaseStorage.getInstance()
-        val listRef = storage.reference.child("images/${user?.id}")
+        val listRef = storage.reference.child("images/${user?.email}")
 
         Log.e(TAG, "list Refr $listRef")
 

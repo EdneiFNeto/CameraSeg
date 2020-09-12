@@ -148,7 +148,7 @@ class MainActivity : BaseActivity() {
                 val storageRef = storage.reference
 
                 var file = Uri.fromFile(photoFile)
-                val riversRef = storageRef.child("images/${user?.id}/${file.lastPathSegment}")
+                val riversRef = storageRef.child("images/${user?.email}/${file.lastPathSegment}")
                 var uploadTask = riversRef.putFile(file)
 
                 uploadTask.addOnFailureListener(OnFailureListener {
