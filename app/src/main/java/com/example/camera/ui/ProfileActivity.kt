@@ -34,7 +34,7 @@ class ProfileActivity : BaseActivity() {
         override fun onPostExecute(result: List<User>?) {
             super.onPostExecute(result)
             if(result?.isNotEmpty() == true){
-                Picasso.get()
+                Picasso.with(context)
                     .load(result?.get(0).icon)
                     .into(imageProfile)
                 title_profile.text = "${result?.get(0).name}"

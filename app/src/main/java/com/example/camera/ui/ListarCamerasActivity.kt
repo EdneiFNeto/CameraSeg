@@ -14,17 +14,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
-import com.daimajia.slider.library.SliderTypes.TextSliderView
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView
+import com.daimajia.slider.library.Transformers.*
 import com.example.camera.R
-import com.example.camera.async.base.BaseSelect
-import com.example.camera.model.User
 import com.example.camera.ui.base.BaseActivity
 import com.example.camera.ui.base.interfaces.CallbackClick
-import com.example.camera.util.CallBack
-import com.example.camera.util.ExecuteTaskUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_listar_cameras.*
 import java.util.*
 
@@ -50,9 +46,6 @@ class ListarCamerasActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        adapter = MyAdapter(this, images)
-        recycleViewImage.adapter = adapter
         showIcons()
 
         mReceiver = Receiver()
@@ -61,6 +54,10 @@ class ListarCamerasActivity : BaseActivity() {
             mReceiver,
             IntentFilter(resources.getString(R.string.action_get_user))
         )
+
+        slider.setPagerTransformer(false, StackTransformer())
+        slider.setDuration(3000)
+
     }
 
     private fun showIcons() {
@@ -111,8 +108,13 @@ class ListarCamerasActivity : BaseActivity() {
                     Log.e(TAG, "item $item")
                     item.downloadUrl.addOnSuccessListener { uri ->
                         Log.e(TAG, "Uri $uri")
+
                         images.add(uri.toString())
-                        adapter.notifyDataSetChanged()
+                        images.sort()
+
+                        var sliderView = DefaultSliderView(this)
+                        sliderView.image(uri.toString())
+                        slider.addSlider(sliderView)
                     }
                 }
             }
@@ -120,7 +122,7 @@ class ListarCamerasActivity : BaseActivity() {
                 Log.e(TAG, "Exception  $it")
             }
             .addOnCompleteListener {
-                Log.e(TAG, "addOnCompleteListener")
+                Log.e(TAG, "addOnCompleteListener $images")
                 dialog?.dismiss()
             }
     }
@@ -151,9 +153,9 @@ class ListarCamerasActivity : BaseActivity() {
             val image = itemView.findViewById<ImageView>(R.id.cardImage)
 
             fun add(string: String) {
-                Picasso.get()
-                    .load(string)
-                    .into(image)
+//                Picasso.get()
+//                    .load(string)
+//                    .into(image)
             }
         }
 
