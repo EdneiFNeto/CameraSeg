@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,8 @@ import com.daimajia.slider.library.Transformers.*
 import com.example.camera.R
 import com.example.camera.ui.base.BaseActivity
 import com.example.camera.ui.base.interfaces.CallbackClick
+import com.example.camera.util.CallBack
+import com.example.camera.util.ExecuteTaskUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_listar_cameras.*
@@ -57,6 +60,15 @@ class ListarCamerasActivity : BaseActivity() {
 
         slider.setPagerTransformer(false, StackTransformer())
         slider.setDuration(3000)
+
+        Handler().postDelayed({
+            ExecuteTaskUtil().start(object : CallBack {
+                override fun tasks() {
+                    Log.e(TAG, "Run Tasks")
+                    showImages()
+                }
+            }, 3)
+        }, 3000)
 
     }
 
