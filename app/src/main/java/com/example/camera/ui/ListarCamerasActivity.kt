@@ -24,6 +24,7 @@ import com.example.camera.util.CallBack
 import com.example.camera.util.ExecuteTaskUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_listar_cameras.*
 import java.util.*
 
@@ -35,7 +36,7 @@ class ListarCamerasActivity : BaseActivity() {
     private var ids = arrayListOf(R.id.item_refresh)
     private lateinit var adapter: MyAdapter
     private var TAG = "ListarCamerasActivityLog"
-    private val images = ArrayList<String>()
+    private val images = ArrayList<MyImages>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,17 +59,10 @@ class ListarCamerasActivity : BaseActivity() {
             IntentFilter(resources.getString(R.string.action_get_user))
         )
 
-        slider.setPagerTransformer(false, StackTransformer())
-        slider.setDuration(3000)
 
-        Handler().postDelayed({
-            ExecuteTaskUtil().start(object : CallBack {
-                override fun tasks() {
-                    Log.e(TAG, "Run Tasks")
-                    showImages()
-                }
-            }, 3)
-        }, 3000)
+        adapter = MyAdapter(this, images)
+        recycleView.adapter = adapter
+
 
     }
 
@@ -120,13 +114,8 @@ class ListarCamerasActivity : BaseActivity() {
                     Log.e(TAG, "item $item")
                     item.downloadUrl.addOnSuccessListener { uri ->
                         Log.e(TAG, "Uri $uri")
-
-                        images.add(uri.toString())
-                        images.sort()
-
-                        var sliderView = DefaultSliderView(this)
-                        sliderView.image(uri.toString())
-                        slider.addSlider(sliderView)
+                        images.add(MyImages(url = "$uri"))
+                        adapter.notifyDataSetChanged()
                     }
                 }
             }
@@ -139,7 +128,7 @@ class ListarCamerasActivity : BaseActivity() {
             }
     }
 
-    inner class MyAdapter(private val context: Context, private val images: ArrayList<String>) :
+    inner class MyAdapter(private val context: Context, private val images: ArrayList<MyImages>) :
         RecyclerView.Adapter<MyAdapter.Holder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -158,16 +147,29 @@ class ListarCamerasActivity : BaseActivity() {
 
         override fun onBindViewHolder(holder: Holder, position: Int) {
             holder.add(images[position])
+            holder.itemView.setOnClickListener {
+
+                val view = LayoutInflater.from(context).inflate(R.layout.dialog_image, null)
+                var imageView = view.findViewById<ImageView>(R.id.imageDialog)
+
+                Picasso.with(context)
+                    .load(images[position].url)
+                    .into(imageView)
+
+                MaterialAlertDialogBuilder(context)
+                    .setView(view)
+                    .show()
+            }
         }
 
         inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             val image = itemView.findViewById<ImageView>(R.id.cardImage)
 
-            fun add(string: String) {
-//                Picasso.get()
-//                    .load(string)
-//                    .into(image)
+            fun add(img: MyImages) {
+                Picasso.with(context)
+                    .load(img.url)
+                    .into(image)
             }
         }
 
@@ -195,3 +197,6 @@ class ListarCamerasActivity : BaseActivity() {
         }
     }
 }
+
+class MyImages (val url:String)
+
